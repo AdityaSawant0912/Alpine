@@ -2,7 +2,6 @@ import NextAuth from "next-auth"
 import executeQuery from '@/lib/db'
 import { compare } from 'bcryptjs';
 import CredentialProvider from "next-auth/providers/credentials"
-import { User2 } from "lucide-react";
 
 export const authOptions = {
   // Configure one or more authentication providers
