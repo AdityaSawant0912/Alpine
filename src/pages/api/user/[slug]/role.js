@@ -29,8 +29,13 @@ export default async function handler(req, res) {
         query: "UPDATE user_auth SET user_role_id = ? WHERE user_id =?",
         values: [roleId, uId]
       })
+      var roles = await executeQuery({
+        query: "SELECT role_description FROM user_roles WHERE role_id =?",
+        values: [roleId]
+      })
+      
       if (data.affectedRows < 0) return res.status(500).json({ message: 'Something went wrong' });
-      return res.status(201).json({ message: 'User updated successfully' });
+      return res.status(201).json({ message: 'User updated successfully', role_description: roles[0].role_description });
 
     default:
       res.status(405).json({ message: 'Method not allowed' });

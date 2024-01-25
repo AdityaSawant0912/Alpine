@@ -19,13 +19,13 @@ export default async function handler(req, res) {
       const { email, password, firstName, lastName } = req.body;
       const userId = uuidv4(); 
       const userHash = await hash(password, 10);
-      const userRole = 2;
+      const userRole = 3;
 
       var user_auth_data = await executeQuery({
         query: "INSERT INTO user_auth(user_id, user_email, user_hash, user_role_id) VALUES (?,?,?,?)",
         values: [userId, email, userHash, userRole]
       })
-      if (user_auth_data.error.code == 'ER_DUP_ENTRY') return res.status(409).json({ message: 'User already exists' })
+      if (user_auth_data.error) return res.status(409).json({ message: 'User already exists' })
       
       var user_acc_data = await executeQuery({
         query: "INSERT INTO user_account(user_id, user_first_name, user_last_name) VALUES (?,?,?);",

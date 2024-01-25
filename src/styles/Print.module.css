@@ -1,0 +1,36 @@
+@media print {
+  .no_print,
+  .no_print * {
+    display: none !important;
+  }
+
+
+  
+  .no_shadow {
+    box-shadow: none !important;
+  }
+
+  .padd1 {
+    padding-top: 10px !important;
+  }
+  .padd2 {
+    padding-top: 70px !important;
+    padding-bottom: 25px !important;
+  }
+  .padd3 {
+    padding-top: 70px !important;
+  }
+  .padd4 {
+    padding-top: 300px !important;
+  }
+  .padd5 {
+    padding-top: 250px !important;
+  }
+
+  .header {
+    display: block !important;
+  }
+}
+.header {
+  display: none;
+}

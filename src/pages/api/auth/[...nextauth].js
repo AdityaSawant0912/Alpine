@@ -2,6 +2,7 @@ import NextAuth from "next-auth"
 import executeQuery from '@/lib/db'
 import { compare } from 'bcryptjs';
 import CredentialProvider from "next-auth/providers/credentials"
+import { User2 } from "lucide-react";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -35,28 +36,35 @@ export const authOptions = {
 
         /* To fetch user data and store it in user object so that you can access in user session object uncomment following code. */
         // By default user object contains only user_id, user_email, user_hash.
-
-        /* let userData = await executeQuery({
+        
+        let role = await executeQuery({
+          query: `SELECT * FROM user_roles where role_id=? LIMIT 1`,
+          values: [dbUser[0].user_role_id]
+        })
+        
+        let userData = await executeQuery({
           query: `SELECT * FROM user_account where user_id=? LIMIT 1`,
           values: [dbUser[0].user_id]
         })
         if (userData.length < 0) return null; ;// User Data not found 
        
         let user = {
-          email: dbUser[0].email,
+          user_email: dbUser[0].user_email,
+          user_role_id: dbUser[0].user_role_id,
+          role_description: role[0].role_description,
           ...userData[0],
-        } */
+        } 
 
-
-        return { userId: dbUser[0].user_id, email: dbUser[0].user_email, roleId: dbUser[0].user_role_id  } // replace this with user object
+        console.log(user);
+        return user // replace this with user object
 
       },
     })
   ],
 
   pages: {
-    // signIn: '/auth/login',   // Uncomment this once you have login page
-    error: '/auth/error', // Error code passed in query string as ?error=
+    signIn: '/login',   // Uncomment this once you have login page
+    error: '/error', // Error code passed in query string as ?error=
   },
 
   callbacks: {
