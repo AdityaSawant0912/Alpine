@@ -6,7 +6,7 @@ import { getProviders, signIn, getSession } from 'next-auth/react'
 import { useFormik, Field, ErrorMessage, FormikProvider } from 'formik'
 import Image from 'next/image'
 import Router from 'next/router'
-import { Divider, Box, AbsoluteCenter } from '@chakra-ui/react'
+import { Divider } from '@mui/material';
 
 function Login() {
     const router = Router
