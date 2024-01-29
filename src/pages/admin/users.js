@@ -25,12 +25,17 @@ import Switch from '@mui/material/Switch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
+import Stack from '@mui/material/Stack';
 import AdminNav from '@/components/Navbars/AdminNav.component'
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import Chip from '@mui/material/Chip';
+import Modal from '@mui/material/Modal';
+import Divider from '@mui/material/Divider';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
@@ -89,6 +94,18 @@ const headCells = [
         numeric: false,
         disablePadding: false,
         label: 'Role',
+    },
+    {
+        id: 'core_category',
+        numeric: false,
+        disablePadding: false,
+        label: 'Core Category',
+    },
+    {
+        id: 'paid_categories',
+        numeric: false,
+        disablePadding: false,
+        label: 'Paid Categories',
     },
     {
         id: 'created_at',
@@ -189,7 +206,30 @@ export default function EnhancedTable() {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
+    const [categories, setCategories] = useState([])
 
+    const [formData, setformData] = useState({});
+    const [open, setOpen] = useState(false);
+
+    const handleOpen = (user_id) => {
+        setformData(rows.find(user => user.id === user_id))
+        setOpen(true)
+        };
+    const handleClose = () => setOpen(false);
+    
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        maxWidth: 1000,
+        maxHeight: 800,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+    };
+    
+    
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -214,13 +254,20 @@ export default function EnhancedTable() {
                 let users = data.users.map((user) => {
                     return {
                         id: user.user_id,
-                        name: user.user_first_name + " " + user.user_last_name,
+                        firstName: user.user_first_name ,
+                        lastName: user.user_last_name,
                         email: user.user_email,
+                        user_contact_no: user.user_contact_no,
+                        user_company_name: user.user_company_name,
+                        user_address: user.user_address,
                         role_id: user.user_role_id,
                         role_name: data.roles.filter(r => r.role_id == user.user_role_id)[0].role_description,
+                        core_category: data.categoryData?.filter(c => c.user_id == user.user_id && c.core == 1)[0]?.category_id,
+                        paid_categories: data.categoryData?.filter(c => c.user_id == user.user_id && c.core == 0)?.map(c => c.category_id),
                         created_at: new Date(user.created_at).toISOString()
                     }
                 })
+                setCategories(data.categories)
                 setRows(users);
                 // setRowsPerPage(25)
             } else {
@@ -306,13 +353,30 @@ export default function EnhancedTable() {
                     u.push(row)
                 })
                 setRows(u)
-                
+
             })
             .catch(err => console.error(err))
     }
 
     return (
         <AdminNav>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+
+                    <Toolbar>
+                        <Typography variant="h4" noWrap component="div">
+                            Attachments
+                        </Typography>
+                    </Toolbar>
+                    <Divider />
+                    
+                </Box>
+            </Modal>
             <Box sx={{ width: '100%' }}>
                 <Paper sx={{ width: '100%', mb: 2 }}>
                     <EnhancedTableToolbar numSelected={selected.length} />
@@ -348,9 +412,33 @@ export default function EnhancedTable() {
                                         >
 
                                             <TableCell align="left">{row.id}</TableCell>
-                                            <TableCell align="left">{row.name}</TableCell>
+                                            <TableCell align="left">{row.firstName + " " + row.lastName}</TableCell>
                                             <TableCell align="left">{row.email}</TableCell>
                                             <TableCell align="left">{row.role_name}</TableCell>
+                                            <TableCell align="left">
+                                                {row.core_category ?
+                                                    <Tooltip title={categories.filter(cat => cat.category_id == row.core_category)[0]?.description}>
+                                                        <Chip label={categories.filter(cat => cat.category_id == row.core_category)[0]?.name} flexgrow={1} />
+                                                    </Tooltip>
+                                                    : <></>}
+                                            </TableCell>
+                                            <TableCell align="left">
+                                                <Box sx={{ maxWidth: 300 }}>
+                                                    <Stack direction={"row"} spacing={1} useFlexGap flexWrap={"wrap"}>
+                                                        {row.paid_categories.length > 0 ?
+                                                            row.paid_categories.map((paid_cat, index) => {
+                                                                return (
+                                                                    <Tooltip key={index} title={categories.filter(cat => cat.category_id == paid_cat)[0]?.description}>
+                                                                        <Chip label={categories.filter(cat => cat.category_id == paid_cat)[0]?.name} flexgrow={1} />
+                                                                    </Tooltip>
+                                                                )
+                                                            })
+
+
+                                                            : <></>}
+                                                    </Stack>
+                                                </Box>
+                                            </TableCell>
                                             <TableCell align="left">{row.created_at}</TableCell>
                                             <TableCell align="left">
 
@@ -387,6 +475,13 @@ export default function EnhancedTable() {
                                                     <Tooltip title={"Approve as Vendor"}>
                                                         <IconButton onClick={() => updateRole(row.id, 2)} >
                                                             <VerifiedIcon />
+                                                        </IconButton>
+                                                    </Tooltip> : <></>
+                                                }
+                                                {row.id != sessionUser.user_id && (sessionUser.user_role_id == 0 || sessionUser.user_role_id == 1) ?
+                                                    <Tooltip title={"Edit User"}>
+                                                        <IconButton onClick={() => handleOpen(row.id)} >
+                                                            <EditOutlinedIcon />
                                                         </IconButton>
                                                     </Tooltip> : <></>
                                                 }

@@ -133,6 +133,7 @@ const MyForm = () => {
                                 onChange={handleCategoryChange}
                                 labelledBy="Select Categories"
                                 className={`bg-slate-200`}
+                                hasSelectAll={false}
                             />
                         </Grid>
                         <Grid item xs={12}>

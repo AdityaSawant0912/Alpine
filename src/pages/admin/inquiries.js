@@ -30,7 +30,6 @@ import { visuallyHidden } from '@mui/utils';
 import AdminNav from '@/components/Navbars/AdminNav.component'
 
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import Modal from '@mui/material/Modal';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import Button from '@mui/material/Button';
 import Link from 'next/link';
@@ -40,6 +39,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 
 import AppBar from '@mui/material/AppBar';
 import CssBaseline from '@mui/material/CssBaseline';
+import Modal from '@mui/material/Modal';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import InboxIcon from '@mui/icons-material/MoveToInbox';

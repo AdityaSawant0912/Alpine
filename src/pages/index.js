@@ -13,15 +13,7 @@ export default function Home() {
             <div className='flex flex-row gap-5 mr-[3%] text-base font-semibold'>
                 <div className='cursor-pointer' onClick={() => signOut()}>Logout</div>
             </div>
-            {/* <br />
-      <button onClick={() => registerHandler()} >Register as John Doe</button>
-      <br />
-      <LoginButton />
-      <br />
 
-      <RegisterButton /> 
-      <br />
-      <LogoutButton /> */}
             <InquiryForm />
         </>
     )
