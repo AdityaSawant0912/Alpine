@@ -102,6 +102,8 @@ const MyForm = ({ cat }) => {
             newCats = newCats.filter(cat => cat.value !== 0);
             setCategories(newCats);
             console.log(newCats);
+        }).catch(err => {
+            setCategories([{ label: 'Database Not Connected', value: 0 }]);
         });
     }, []);
 

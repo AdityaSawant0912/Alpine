@@ -31,9 +31,12 @@ export default function Home({ categories }) {
 
 
 export async function getServerSideProps(context) {
-    
-    let data = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/categories`)
-    let results = await data.json()
+    try {
+        let data = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/categories`)
+        let results = await data.json()
+    } catch (error) {
+        let results = [{categorie_id: 1, name: 'Database Not Connected'}]
+    }
     return {
         props: { categories: results }, // will be passed to the page component as props
     }
