@@ -10,7 +10,7 @@ const Categories = ({ categories }) => {
 
   return (
     <div className='mt-10 flex flex-col justify-center items-center'>
-        <div className='text-gray-900 text-3xl'>
+          <div className='text-gray-900 text-3xl allcategories'>
             <h2>All Categories</h2>
         </div>
         
