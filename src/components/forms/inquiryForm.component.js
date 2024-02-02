@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import { TextField, Button, Typography, Container, Box, Input, Grid, Paper, IconButton } from '@mui/material';
+import { TextareaAutosize as BaseTextareaAutosize } from '@mui/base/TextareaAutosize';
 import CloseIcon from '@mui/icons-material/Close';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import { MultiSelect } from "react-multi-select-component";
-const MyForm = () => {
+import Select, { StylesConfig } from 'react-select'
+import { styled } from '@mui/system';
+const MyForm = ({ cat }) => {
     const formik = useFormik({
         initialValues: {
             body: '',
@@ -56,9 +59,6 @@ const MyForm = () => {
             console.log(attachments);
             // Post Inquiry
             let cats = values.categories.map(category => parseInt(category.value));
-            if (cats?.length <= 0 || cats?.length == categories.length) {
-                cats = [0];
-            }
             fetch('/api/inquiry', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -79,8 +79,19 @@ const MyForm = () => {
     });
 
     const [categories, setCategories] = useState([]);
+    
+
+    
+    useEffect(() => {
+        if (cat !== 0) {
+            console.log(cat, [categories.filter(c => c.value === cat)]);
+            formik.setFieldValue('categories', categories.filter(c => c.value === cat));
+        }
+        
+    }, [cat]);
 
     useEffect(() => {
+        
         fetch('/api/categories', { method: 'GET' }).then(res => res.json()).then(data => {
             let newCats = data.map(category => {
                 return {
@@ -114,37 +125,51 @@ const MyForm = () => {
         const updatedFiles = formik.values.files.filter(file => file.name !== fileName);
         formik.setFieldValue('files', updatedFiles);
     };
+    
+    const customStyles = {
+        control: (styles) => ({...styles, backgroundColor: 'white'}),
+        options: (styles, opt) => ({ ...styles, backgroundColor: 'white' }),
+        input: (styles) => ({ ...styles, backgroundColor: 'white' }),
+        placeholder: (styles) => ({ ...styles, backgroundColor: 'white' }),
+        singleValue: (styles, opt) => ({ ...styles, backgroundColor: 'white' }),
+    }
+    
+    const Textarea = styled(BaseTextareaAutosize)(
+        ({ theme }) => `
 
+    width: 320px;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    padding: 12px;
+    border-radius: 12px 12px 0 12px;
+
+
+    
+  `,
+    );
+    
+    
     return (
-        <Container>
+        <Container className='inquiry'>
             <Box mt={3}>
-                <Typography variant="h4" gutterBottom>
+                <Typography variant="h5" gutterBottom>
                     Inquiry Form
                 </Typography>
                 <form onSubmit={formik.handleSubmit}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
-                            <MultiSelect
-                                id="categories"
-                                name="categories"
-                                label="Categories"
-                                options={categories}
-                                value={formik.values.categories}
-                                onChange={handleCategoryChange}
-                                labelledBy="Select Categories"
-                                className={`bg-slate-200`}
-                                hasSelectAll={false}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
+                            <BaseTextareaAutosize 
                                 fullWidth
                                 id="body"
                                 name="body"
                                 label="Body"
                                 variant="outlined"
+                                placeholder='Type your inquiry here...'
                                 required
+                                minRows={3}
                                 onChange={formik.handleChange}
+                                className='w-full p-4 rounded-lg border-2 border-gray-300 '
                                 value={formik.values.body}
                                 error={formik.touched.body && Boolean(formik.errors.body)}
                             />
@@ -187,6 +212,20 @@ const MyForm = () => {
                                 error={formik.touched.inquirer_mobile && Boolean(formik.errors.inquirer_mobile)}
                             />
                         </Grid>
+                        <Grid item xs={12} sm={6}>
+
+                            <Select
+                                id="categories"
+                                name="categories"
+                                label="Categories"
+                                options={categories}
+                                value={formik.values.categories}
+                                onChange={handleCategoryChange}
+                                isMulti
+                                placeholder="Select Categories"
+                                styles={{ backgroundColor: 'white' }}
+                            />
+                        </Grid>
                         <Grid item xs={12}>
                             <Input
                                 fullWidth
@@ -197,6 +236,7 @@ const MyForm = () => {
                                 inputProps={{ multiple: true }}
                             />
                         </Grid>
+                        
                         <Grid item xs={12}>
                             {formik.values.files.length > 0 && (
                                 <Typography variant="subtitle1" gutterBottom>

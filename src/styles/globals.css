@@ -8,12 +8,22 @@
     --background-end-rgb: 255, 255, 255;
   }
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: url('../../public/bg.png');
+}
+
+.spinny:hover {
+  animation: spin 0.5s ease-in-out ;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
